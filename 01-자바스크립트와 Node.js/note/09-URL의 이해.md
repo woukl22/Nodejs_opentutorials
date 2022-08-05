@@ -1,5 +1,5 @@
 # **09 URL의 이해**
-![http://opentutorials.org:3000/main?id=HTML&page=12](09.png)
+![http://opentutorials.org:3000/main?id=HTML&page=12](data/09.png)
 *출처: 생활코딩 유튜브: https://youtu.be/Zhbvui_T9VY*
 
 <br>

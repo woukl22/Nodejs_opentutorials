@@ -1,6 +1,6 @@
 # **10-URL을 통해서 입력된 값 사용하기**
 
-![](10-1.png)
+![](data/10-1.png)
 
 이 주소에서 `id=HTML`은 query string이다.<br>
 그리고 `/?id=HTML`까지가 url 변수이다.
@@ -73,7 +73,7 @@ var url = request.url;
 
 <br>
 
-![](10-1.png)
+![](data/10-1.png)
 
 주소의 query string이 id로 되어 있기 때문에 HTML이 출력된 것이고,<br>
 값의 이름을 name으로 바꾸고 같은 값이 나오게 하려면, `.id`를 `.name`으로 바꿔줘야 한다.
@@ -95,7 +95,7 @@ response.end(fs.readFileSync(__dirname + _url));
 사용자가 접속한 url에 따라서 파일들을 읽어주는 코드가 `fs.readFileSync(__dirname + _url)` 부분이다.<br>
 이 부분을 `queryData.id`를 넣고 실행해주면 화면과 콘솔에 id가 출력된다.
 
-![](10-2.png)
+![](data/10-2.png)
 
 주소를 바꿔주면 바꿔준 query string의 id 값이 화면에 출력된다.
 ```

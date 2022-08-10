@@ -16,9 +16,17 @@ var app = http.createServer(function(request,response){
 
       if(pathname === '/'){
         if(queryData.id === undefined){
-          fs.readFile(`./01-자바스크립트와 Node.js/data/${queryData.id}`, 'utf8', function(err, description){
+          fs.readdir('./01-자바스크립트와 Node.js/data', function(error, filelist){
+            console.log(filelist);
             var title = 'Welcome';
             var description = 'Hello, Node.js';
+            var list = '<ul>';
+            var i = 0;
+            while(i < filelist.length){
+              list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`
+              i = i + 1;
+            }
+            list = list+'</ul>';
             var template = `
             <!doctype html>
             <html>
@@ -28,11 +36,7 @@ var app = http.createServer(function(request,response){
             </head>
             <body>
               <h1><a href="/">WEB</a></h1>
-              <ul>
-                <li><a href="/?id=HTML">HTML</a></li>
-                <li><a href="/?id=CSS">CSS</a></li>
-                <li><a href="/?id=JavaScript">JavaScript</a></li>
-              </ul>
+              ${list}
               <h2>${title}</h2>
               <p>${description}</p>
             </body>
@@ -40,32 +44,42 @@ var app = http.createServer(function(request,response){
             `;
             response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
             response.end(template);
-          });
+          })
+          
+          
         } else{
-          fs.readFile(`./01-자바스크립트와 Node.js/data/${queryData.id}`, 'utf8', function(err, description){
-            var title = queryData.id;
-            var template = `
-            <!doctype html>
-            <html>
-            <head>
-              <title>WEB1 - ${title}</title>
-              <meta charset="utf-8">
-            </head>
-            <body>
-              <h1><a href="/">WEB</a></h1>
-              <ul>
-                <li><a href="/?id=HTML">HTML</a></li>
-                <li><a href="/?id=CSS">CSS</a></li>
-                <li><a href="/?id=JavaScript">JavaScript</a></li>
-              </ul>
-              <h2>${title}</h2>
-              <p>${description}</p>
-            </body>
-            </html>
-            `;
-            response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
-            response.end(template);
-          });
+          fs.readdir('./01-자바스크립트와 Node.js/data', function(error, filelist){
+            console.log(filelist);
+            var title = 'Welcome';
+            var description = 'Hello, Node.js';
+            var list = '<ul>';
+            var i = 0;
+            while(i < filelist.length){
+              list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`
+              i = i + 1;
+            }
+            list = list+'</ul>';
+            fs.readFile(`./01-자바스크립트와 Node.js/data/${queryData.id}`, 'utf8', function(err, description){
+              var title = queryData.id;
+              var template = `
+              <!doctype html>
+              <html>
+              <head>
+                <title>WEB1 - ${title}</title>
+                <meta charset="utf-8">
+              </head>
+              <body>
+                <h1><a href="/">WEB</a></h1>
+                ${list}
+                <h2>${title}</h2>
+                <p>${description}</p>
+              </body>
+              </html>
+              `;
+              response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
+              response.end(template);
+            });
+          })
         }        
       } else{
         response.writeHead(200);  // 파일을 찾을 수 없는 경우, 웹 서버는 404라는 번호를 돌려준다.

@@ -2,6 +2,38 @@ var http = require('http');
 var fs = require('fs');
 var url = require('url');
 
+/*
+  함수는 재사용할 수 있는 껍데기 정도로 이야기할 수 있다.
+  달라질 수 있는 부분만 바꾸는 걸 통해 재사용할 수 있다.
+*/
+function templateHTML(title, list, body){  
+  return `
+  <!doctype html>
+  <html>
+  <head>
+    <title>WEB1 - ${title}</title>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <h1><a href="/">WEB</a></h1>
+    ${list}
+    ${body}
+  </body>
+  </html>
+  `;
+}
+
+function templateList(filelist){
+  var list = '<ul>';
+  var i = 0;
+  while(i < filelist.length){
+    list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`
+    i = i + 1;
+  }
+  list = list+'</ul>';
+  return list;
+}
+
 var app = http.createServer(function(request,response){
     var _url = request.url;
     var queryData = url.parse(_url, true).query;
@@ -17,31 +49,10 @@ var app = http.createServer(function(request,response){
       if(pathname === '/'){
         if(queryData.id === undefined){
           fs.readdir('./01-자바스크립트와 Node.js/data', function(error, filelist){
-            console.log(filelist);
             var title = 'Welcome';
             var description = 'Hello, Node.js';
-            var list = '<ul>';
-            var i = 0;
-            while(i < filelist.length){
-              list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`
-              i = i + 1;
-            }
-            list = list+'</ul>';
-            var template = `
-            <!doctype html>
-            <html>
-            <head>
-              <title>WEB1 - ${title}</title>
-              <meta charset="utf-8">
-            </head>
-            <body>
-              <h1><a href="/">WEB</a></h1>
-              ${list}
-              <h2>${title}</h2>
-              <p>${description}</p>
-            </body>
-            </html>
-            `;
+            var list = templateList(filelist);
+            var template = templateHTML(title, list, `<h2>${title}</h2>${description}`);    // 로직에 대한 설명을 알 수 있다. => 'HTML에 대한 템플릿인가보다.'
             response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
             response.end(template);
           })
@@ -49,33 +60,10 @@ var app = http.createServer(function(request,response){
           
         } else{
           fs.readdir('./01-자바스크립트와 Node.js/data', function(error, filelist){
-            console.log(filelist);
-            var title = 'Welcome';
-            var description = 'Hello, Node.js';
-            var list = '<ul>';
-            var i = 0;
-            while(i < filelist.length){
-              list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`
-              i = i + 1;
-            }
-            list = list+'</ul>';
             fs.readFile(`./01-자바스크립트와 Node.js/data/${queryData.id}`, 'utf8', function(err, description){
               var title = queryData.id;
-              var template = `
-              <!doctype html>
-              <html>
-              <head>
-                <title>WEB1 - ${title}</title>
-                <meta charset="utf-8">
-              </head>
-              <body>
-                <h1><a href="/">WEB</a></h1>
-                ${list}
-                <h2>${title}</h2>
-                <p>${description}</p>
-              </body>
-              </html>
-              `;
+              var list = templateList(filelist);
+              var template = templateHTML(title, list, `<h2>${title}</h2>${description}`);
               response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
               response.end(template);
             });

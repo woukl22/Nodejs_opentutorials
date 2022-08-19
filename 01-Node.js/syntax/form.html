@@ -1,0 +1,26 @@
+<form action="http://localhost:3000/process_create" method="post">
+    <p><input type="text" name="title"></p>
+    <p>
+        <textarea name="description"></textarea>
+    </p>
+    <p>
+        <input type="submit">
+    </p>
+</form>
+
+<!--
+    form이라는 태그는
+    사용자가 입력한 정보를 submit 버튼을 눌렀을 때
+    action 속성이 가리키는 서버로 
+    query string의 형태로 데이터를 전송하는 html의 기능이다.
+
+
+    서버에서 데이터를 가져올 땐(GET) 쿼리스트링을 쓰고, // method="get" 또는 method 생략
+    
+    서버에 데이터를 생성하거나 수정하거나 삭제할 땐, 필요한 데이터를 url로 보내면 절대 안된다.
+    => 눈에 보이지 않는 방식으로 보내야 한다. 그러기 위해서 method="post"를 써주면 된다.
+         그럼 url에 쿼리 스트링이 들어오지 않는다.
+         url은 무한히 긴 데이터를 수용하지 않기 때문에, method="post"를 해주어야 아주 큰 데이터도 전송할 수 있다.
+         url로 보내면 데이터가 잘릴 수도 있다.
+-->
+

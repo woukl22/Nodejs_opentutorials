@@ -1,4 +1,4 @@
-var testFolder = './01-자바스크립트와 Node.js/data';
+var testFolder = './01-Node.js/data';
 var fs = require('fs');
 
 fs.readdir(testFolder, function(error, filelist){

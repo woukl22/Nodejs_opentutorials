@@ -48,7 +48,7 @@ var app = http.createServer(function(request,response){
 
       if(pathname === '/'){
         if(queryData.id === undefined){
-          fs.readdir('./01-자바스크립트와 Node.js/data', function(error, filelist){
+          fs.readdir('./01-Node.js/data', function(error, filelist){
             var title = 'Welcome';
             var description = 'Hello, Node.js';
             var list = templateList(filelist);
@@ -59,8 +59,8 @@ var app = http.createServer(function(request,response){
           
           
         } else{
-          fs.readdir('./01-자바스크립트와 Node.js/data', function(error, filelist){
-            fs.readFile(`./01-자바스크립트와 Node.js/data/${queryData.id}`, 'utf8', function(err, description){
+          fs.readdir('./01-Node.js/data', function(error, filelist){
+            fs.readFile(`./01-Node.js/data/${queryData.id}`, 'utf8', function(err, description){
               var title = queryData.id;
               var list = templateList(filelist);
               var template = templateHTML(title, list, `<h2>${title}</h2>${description}`);

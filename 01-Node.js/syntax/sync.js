@@ -26,7 +26,7 @@ console.log('C');
     두 번째 인자에는 파일의 내용을 인자로써 공급해 주도록 약속되어 있다.
 */
 console.log('A');
-var result = fs.readFile('./01-자바스크립트와 Node.js/syntax/sample.txt', 'utf8', function(err, result){
+var result = fs.readFile('./01-Node.js/syntax/sample.txt', 'utf8', function(err, result){
     console.log(result);    
 });
 console.log('C');

@@ -114,12 +114,14 @@ var app = http.createServer(function(request,response){
           var post = qs.parse(body);
           var title = post.title;
           var description = post.description;
-          console.log(post.title);
+          fs.writeFile(`./01-Node.js/data/${title}`, description, 'utf8', function(err){
+            response.writeHead(302, {Location: `/?id=${title}`});
+            response.end();
+          })
         });
-        response.writeHead(200);
-        response.end('success');
+        // 사용자가 어떤 페이지에서 어떤 처리를 한 다음에 사용자를 다시 다른 페이지로 튕겨보내는 것을 redirection이라고 한다.
       } else{
-        response.writeHead(200);  // 파일을 찾을 수 없는 경우, 웹 서버는 404라는 번호를 돌려준다.
+        response.writeHead(404);  // 파일을 찾을 수 없는 경우, 웹 서버는 404라는 번호를 돌려준다.
         response.end('Not found');
       }  
 });

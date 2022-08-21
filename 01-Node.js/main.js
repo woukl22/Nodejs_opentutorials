@@ -17,6 +17,7 @@ function templateHTML(title, list, body){
   <body>
     <h1><a href="/">WEB</a></h1>
     ${list}
+    <a href="/create">create</a>
     ${body}
   </body>
   </html>
@@ -56,8 +57,6 @@ var app = http.createServer(function(request,response){
             response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
             response.end(template);
           })
-          
-          
         } else{
           fs.readdir('./01-Node.js/data', function(error, filelist){
             fs.readFile(`./01-Node.js/data/${queryData.id}`, 'utf8', function(err, description){
@@ -69,6 +68,24 @@ var app = http.createServer(function(request,response){
             });
           })
         }        
+      } else if(pathname === '/create'){
+        fs.readdir('./01-Node.js/data', function(error, filelist){
+          var title = 'WEB - create';
+          var list = templateList(filelist);
+          var template = templateHTML(title, list, `
+            <form action="http://localhost:3000/process_create" method="post">
+              <p><input type="text" name="title" placeholder="title"></p>
+              <p>
+                <textarea name="description" placeholder="description"></textarea>
+              </p>
+              <p>
+                <input type="submit">
+              </p>
+            </form>
+          `);    // 로직에 대한 설명을 알 수 있다. => 'HTML에 대한 템플릿인가보다.'
+          response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
+          response.end(template);
+        })
       } else{
         response.writeHead(200);  // 파일을 찾을 수 없는 경우, 웹 서버는 404라는 번호를 돌려준다.
         response.end('Not found');

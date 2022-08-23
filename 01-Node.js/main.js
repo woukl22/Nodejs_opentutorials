@@ -73,14 +73,14 @@ var app = http.createServer(function(request,response){
               response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
               response.end(template);
             });
-          })
+          });
         }        
       } else if(pathname === '/create'){
         fs.readdir('./01-Node.js/data', function(error, filelist){
           var title = 'WEB - create';
           var list = templateList(filelist);
           var template = templateHTML(title, list, `
-            <form action="http://localhost:3000/create_process" method="post">
+            <form action="/create_process" method="post">
               <p><input type="text" name="title" placeholder="title"></p>
               <p>
                 <textarea name="description" placeholder="description"></textarea>
@@ -126,6 +126,30 @@ var app = http.createServer(function(request,response){
           })
         });
         // 사용자가 어떤 페이지에서 어떤 처리를 한 다음에 사용자를 다시 다른 페이지로 튕겨보내는 것을 redirection이라고 한다.
+      } else if(pathname === '/update'){
+        fs.readdir('./01-Node.js/data', function(error, filelist){
+          fs.readFile(`./01-Node.js/data/${queryData.id}`, 'utf8', function(err, description){
+            var title = queryData.id;
+            var list = templateList(filelist);
+            var template = templateHTML(title, list, 
+              `
+              <form action="/update_process" method="post">
+                <input type="text" name="id" value="${title}">
+                <p><input type="hidden" name="title" placeholder="title" value="${title}"></p>
+                <p>
+                  <textarea name="description" placeholder="description">${description}</textarea>
+                </p>
+                <p>
+                  <input type="submit">
+                </p>
+              </form>
+              `,
+              `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`
+            );
+            response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
+            response.end(template);
+          });
+        });
       } else{
         response.writeHead(404);  // 파일을 찾을 수 없는 경우, 웹 서버는 404라는 번호를 돌려준다.
         response.end('Not found');

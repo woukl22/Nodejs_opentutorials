@@ -63,7 +63,7 @@ var app = http.createServer(function(request,response){
           })
         } else{
           fs.readdir('./01-Node.js/data', function(error, filelist){
-            fs.readFile(`./01-Node.js/data/${queryData.id}`, 'utf8', function(err, description){
+            fs.readFile(`./01-Node.js/data/${queryData.id}`, 'utf8', function(error, description){
               var title = queryData.id;
               var list = templateList(filelist);
               var template = templateHTML(title, list, 
@@ -125,7 +125,7 @@ var app = http.createServer(function(request,response){
           var post = qs.parse(body);
           var title = post.title;
           var description = post.description;
-          fs.writeFile(`./01-Node.js/data/${title}`, description, 'utf8', function(err){
+          fs.writeFile(`./01-Node.js/data/${title}`, description, 'utf8', function(error){
             response.writeHead(302, {Location: `/?id=${title}`});
             response.end();
           })
@@ -133,7 +133,7 @@ var app = http.createServer(function(request,response){
         // 사용자가 어떤 페이지에서 어떤 처리를 한 다음에 사용자를 다시 다른 페이지로 튕겨보내는 것을 redirection이라고 한다.
       } else if(pathname === '/update'){
         fs.readdir('./01-Node.js/data', function(error, filelist){
-          fs.readFile(`./01-Node.js/data/${queryData.id}`, 'utf8', function(err, description){
+          fs.readFile(`./01-Node.js/data/${queryData.id}`, 'utf8', function(error, description){
             var title = queryData.id;
             var list = templateList(filelist);
             var template = templateHTML(title, list, 
@@ -165,12 +165,25 @@ var app = http.createServer(function(request,response){
           var id = post.id;
           var title = post.title;
           var description = post.description;
-          fs.rename(`./01-Node.js/data/${id}`, `./01-Node.js/data/${title}`, function(err){
-            fs.writeFile(`./01-Node.js/data/${title}`, description, 'utf8', function(err){
+          fs.rename(`./01-Node.js/data/${id}`, `./01-Node.js/data/${title}`, function(error){
+            fs.writeFile(`./01-Node.js/data/${title}`, description, 'utf8', function(error){
               response.writeHead(302, {Location: `/?id=${title}`});
               response.end();
             })
           });
+        });
+      } else if(pathname === '/delete_process'){
+        var body = '';
+        request.on('data', function(data){
+          body = body + data;
+        });
+        request.on('end', function(){
+          var post = qs.parse(body);
+          var id = post.id;
+          fs.unlink(`./01-Node.js/data/${id}`, function(error){
+            response.writeHead(302, {Location: '/'});
+            response.end();
+          })
         });
       } else{
         response.writeHead(404);  // 파일을 찾을 수 없는 경우, 웹 서버는 404라는 번호를 돌려준다.

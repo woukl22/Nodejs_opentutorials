@@ -134,8 +134,8 @@ var app = http.createServer(function(request,response){
             var template = templateHTML(title, list, 
               `
               <form action="/update_process" method="post">
-                <input type="text" name="id" value="${title}">
-                <p><input type="hidden" name="title" placeholder="title" value="${title}"></p>
+                <input type="hidden" name="id" value="${title}">
+                <p><input type="text" name="title" placeholder="title" value="${title}"></p>
                 <p>
                   <textarea name="description" placeholder="description">${description}</textarea>
                 </p>
@@ -148,6 +148,23 @@ var app = http.createServer(function(request,response){
             );
             response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
             response.end(template);
+          });
+        });
+      } else if(pathname === '/update_process'){
+        var body = '';
+        request.on('data', function(data){
+          body = body + data;
+        });
+        request.on('end', function(){
+          var post = qs.parse(body);
+          var id = post.id;
+          var title = post.title;
+          var description = post.description;
+          fs.rename(`./01-Node.js/data/${id}`, `./01-Node.js/data/${title}`, function(err){
+            fs.writeFile(`./01-Node.js/data/${title}`, description, 'utf8', function(err){
+              response.writeHead(302, {Location: `/?id=${title}`});
+              response.end();
+            })
           });
         });
       } else{

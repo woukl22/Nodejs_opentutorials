@@ -7,7 +7,7 @@ var qs = require('querystring');
   함수는 재사용할 수 있는 껍데기 정도로 이야기할 수 있다.
   달라질 수 있는 부분만 바꾸는 걸 통해 재사용할 수 있다.
 */
-function templateHTML(title, list, body){  
+function templateHTML(title, list, body, control){  
   return `
   <!doctype html>
   <html>
@@ -18,7 +18,7 @@ function templateHTML(title, list, body){
   <body>
     <h1><a href="/">WEB</a></h1>
     ${list}
-    <a href="/create">create</a>
+    ${control}
     ${body}
   </body>
   </html>
@@ -54,7 +54,10 @@ var app = http.createServer(function(request,response){
             var title = 'Welcome';
             var description = 'Hello, Node.js';
             var list = templateList(filelist);
-            var template = templateHTML(title, list, `<h2>${title}</h2>${description}`);    // 로직에 대한 설명을 알 수 있다. => 'HTML에 대한 템플릿인가보다.'
+            var template = templateHTML(title, list, 
+              `<h2>${title}</h2>${description}`, 
+              `<a href="/create">create</a>`
+            );    // 로직에 대한 설명을 알 수 있다. => 'HTML에 대한 템플릿인가보다.'
             response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
             response.end(template);
           })
@@ -63,7 +66,10 @@ var app = http.createServer(function(request,response){
             fs.readFile(`./01-Node.js/data/${queryData.id}`, 'utf8', function(err, description){
               var title = queryData.id;
               var list = templateList(filelist);
-              var template = templateHTML(title, list, `<h2>${title}</h2>${description}`);
+              var template = templateHTML(title, list, 
+                `<h2>${title}</h2>${description}`,
+                `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`
+              );
               response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
               response.end(template);
             });
@@ -83,7 +89,7 @@ var app = http.createServer(function(request,response){
                 <input type="submit">
               </p>
             </form>
-          `);    // 로직에 대한 설명을 알 수 있다. => 'HTML에 대한 템플릿인가보다.'
+          `, '');    // 로직에 대한 설명을 알 수 있다. => 'HTML에 대한 템플릿인가보다.'
           response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
           response.end(template);
         })

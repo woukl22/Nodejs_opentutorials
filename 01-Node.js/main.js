@@ -68,7 +68,12 @@ var app = http.createServer(function(request,response){
               var list = templateList(filelist);
               var template = templateHTML(title, list, 
                 `<h2>${title}</h2>${description}`,
-                `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`
+                ` <a href="/create">create</a> 
+                  <a href="/update?id=${title}">update</a>
+                  <form action="delete_process" method="post">
+                    <input type="hidden" name="id" value="${title}">
+                    <input type="submit" value="delete">
+                  </form>`
               );
               response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
               response.end(template);

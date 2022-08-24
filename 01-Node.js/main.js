@@ -2,41 +2,7 @@ var http = require('http');
 var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
-
-
-var template = {
-  // 프로퍼티: 객체에 있는 값 하나하나를 프로퍼티라고 부른다.
-  HTML: function(title, list, body, control){  
-    return `
-    <!doctype html>
-    <html>
-    <head>
-      <title>WEB1 - ${title}</title>
-      <meta charset="utf-8">
-    </head>
-    <body>
-      <h1><a href="/">WEB</a></h1>
-      ${list}
-      ${control}
-      ${body}
-    </body>
-    </html>
-    `;
-  }, list: function templateList(filelist){
-    var list = '<ul>';
-    var i = 0;
-    while(i < filelist.length){
-      list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`
-      i = i + 1;
-    }
-    list = list+'</ul>';
-    return list;
-  }
-/*
-  함수는 재사용할 수 있는 껍데기 정도로 이야기할 수 있다.
-  달라질 수 있는 부분만 바꾸는 걸 통해 재사용할 수 있다.
-*/
-}
+var template = require('./lib/template.js');
 
 /*
   refactoring(리팩토링): 동작방법은 똑같이 유지하면서 내부의 코드를 더 효율적으로 바꾸는 행위
@@ -45,7 +11,6 @@ var template = {
   알고있는 최소한의 문법으로 잘 동작하는 코드를 먼저 만든 뒤
   자주 리팩토링을 하는 것이 좋다.  
 */
-
 
 var app = http.createServer(function(request,response){
     var _url = request.url;

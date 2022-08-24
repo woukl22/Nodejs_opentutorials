@@ -3,38 +3,49 @@ var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
 
+
+var template = {
+  // 프로퍼티: 객체에 있는 값 하나하나를 프로퍼티라고 부른다.
+  HTML: function(title, list, body, control){  
+    return `
+    <!doctype html>
+    <html>
+    <head>
+      <title>WEB1 - ${title}</title>
+      <meta charset="utf-8">
+    </head>
+    <body>
+      <h1><a href="/">WEB</a></h1>
+      ${list}
+      ${control}
+      ${body}
+    </body>
+    </html>
+    `;
+  }, list: function templateList(filelist){
+    var list = '<ul>';
+    var i = 0;
+    while(i < filelist.length){
+      list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`
+      i = i + 1;
+    }
+    list = list+'</ul>';
+    return list;
+  }
 /*
   함수는 재사용할 수 있는 껍데기 정도로 이야기할 수 있다.
   달라질 수 있는 부분만 바꾸는 걸 통해 재사용할 수 있다.
 */
-function templateHTML(title, list, body, control){  
-  return `
-  <!doctype html>
-  <html>
-  <head>
-    <title>WEB1 - ${title}</title>
-    <meta charset="utf-8">
-  </head>
-  <body>
-    <h1><a href="/">WEB</a></h1>
-    ${list}
-    ${control}
-    ${body}
-  </body>
-  </html>
-  `;
 }
 
-function templateList(filelist){
-  var list = '<ul>';
-  var i = 0;
-  while(i < filelist.length){
-    list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`
-    i = i + 1;
-  }
-  list = list+'</ul>';
-  return list;
-}
+/*
+  refactoring(리팩토링): 동작방법은 똑같이 유지하면서 내부의 코드를 더 효율적으로 바꾸는 행위
+  
+  처음부터 잘 만든 코드를 만들기는 힘들기 때문에  
+  알고있는 최소한의 문법으로 잘 동작하는 코드를 먼저 만든 뒤
+  자주 리팩토링을 하는 것이 좋다.  
+*/
+
 
 var app = http.createServer(function(request,response){
     var _url = request.url;
@@ -53,6 +64,8 @@ var app = http.createServer(function(request,response){
           fs.readdir('./01-Node.js/data', function(error, filelist){
             var title = 'Welcome';
             var description = 'Hello, Node.js';
+           
+            /*
             var list = templateList(filelist);
             var template = templateHTML(title, list, 
               `<h2>${title}</h2>${description}`, 
@@ -60,13 +73,22 @@ var app = http.createServer(function(request,response){
             );    // 로직에 대한 설명을 알 수 있다. => 'HTML에 대한 템플릿인가보다.'
             response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
             response.end(template);
+            */
+
+            var list = template.list(filelist);
+            var html = template.HTML(title, list, 
+              `<h2>${title}</h2>${description}`, 
+              `<a href="/create">create</a>`
+            );
+            response.writeHead(200);
+            response.end(html);
           })
         } else{
           fs.readdir('./01-Node.js/data', function(error, filelist){
             fs.readFile(`./01-Node.js/data/${queryData.id}`, 'utf8', function(error, description){
               var title = queryData.id;
-              var list = templateList(filelist);
-              var template = templateHTML(title, list, 
+              var list = template.list(filelist);
+              var html = template.HTML(title, list, 
                 `<h2>${title}</h2>${description}`,
                 ` <a href="/create">create</a> 
                   <a href="/update?id=${title}">update</a>
@@ -76,15 +98,15 @@ var app = http.createServer(function(request,response){
                   </form>`
               );
               response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
-              response.end(template);
+              response.end(html);
             });
           });
         }        
       } else if(pathname === '/create'){
         fs.readdir('./01-Node.js/data', function(error, filelist){
           var title = 'WEB - create';
-          var list = templateList(filelist);
-          var template = templateHTML(title, list, `
+          var list = template.list(filelist);
+          var html = template.HTML(title, list, `
             <form action="/create_process" method="post">
               <p><input type="text" name="title" placeholder="title"></p>
               <p>
@@ -96,7 +118,7 @@ var app = http.createServer(function(request,response){
             </form>
           `, '');    // 로직에 대한 설명을 알 수 있다. => 'HTML에 대한 템플릿인가보다.'
           response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
-          response.end(template);
+          response.end(html);
         })
       } else if(pathname === '/create_process'){
         var body = '';
@@ -135,8 +157,8 @@ var app = http.createServer(function(request,response){
         fs.readdir('./01-Node.js/data', function(error, filelist){
           fs.readFile(`./01-Node.js/data/${queryData.id}`, 'utf8', function(error, description){
             var title = queryData.id;
-            var list = templateList(filelist);
-            var template = templateHTML(title, list, 
+            var list = template.list(filelist);
+            var html = template.HTML(title, list, 
               `
               <form action="/update_process" method="post">
                 <input type="hidden" name="id" value="${title}">
@@ -152,7 +174,7 @@ var app = http.createServer(function(request,response){
               `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`
             );
             response.writeHead(200); // 200이라는 숫자를 서버가 브라우저에게 주면, 파일이 성공적으로 전송됐다라는 의미이다.
-            response.end(template);
+            response.end(html);
           });
         });
       } else if(pathname === '/update_process'){

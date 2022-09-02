@@ -4,6 +4,7 @@ var url = require('url');
 var qs = require('querystring');
 var template = require('./lib/template.js');
 var path = require('path');
+var sanitizeHtml = require('sanitize-html');
 
 /*
   refactoring(리팩토링): 동작방법은 똑같이 유지하면서 내부의 코드를 더 효율적으로 바꾸는 행위
@@ -54,13 +55,17 @@ var app = http.createServer(function(request,response){
             var filteredId = path.parse(queryData.id).base;
             fs.readFile(`./01-Node.js/data/${filteredId}`, 'utf8', function(error, description){
               var title = queryData.id;
+              var sanitizedTitle = sanitizeHtml(title);
+              var sanitizedDescription = sanitizeHtml(description, {
+                allowedTags:['h1']
+              });
               var list = template.list(filelist);
-              var html = template.HTML(title, list, 
-                `<h2>${title}</h2>${description}`,
+              var html = template.HTML(sanitizedTitle, list, 
+                `<h2>${sanitizedTitle}</h2>${sanitizedDescription}`,
                 ` <a href="/create">create</a> 
-                  <a href="/update?id=${title}">update</a>
+                  <a href="/update?id=${sanitizedTitle}">update</a>
                   <form action="delete_process" method="post">
-                    <input type="hidden" name="id" value="${title}">
+                    <input type="hidden" name="id" value="${sanitizedTitle}">
                     <input type="submit" value="delete">
                   </form>`
               );
